@@ -52,30 +52,22 @@ def cBezier(t, *pointList):
         print "ERROR: cBezier() should have 4 points"
 
 
-
 def derivativeBezier(t,*pointList):
-    
+    """ calculates derivative values for given control points and current t-factor """
     p1x,p1y = pointList[0]
     p2x,p2y = pointList[1]
     p3x,p3y = pointList[2]
     p4x,p4y = pointList[3]
-    Wx = [p1x,p2x,p3x,p4x]
-    Wy = [p1y,p2y,p3y,p4y]
     
     summaX = -3*p1x*(1 - t)**2 + p2x*(3*(1 - t)**2 - 6*(1 - t)*t) + p3x*(6*(1 - t)*t - 3*t**2) + 3*p4x*t**2
     summaY = -3*p1y*(1 - t)**2 + p2y*(3*(1 - t)**2 - 6*(1 - t)*t) + p3y*(6*(1 - t)*t - 3*t**2) + 3*p4y*t**2
-
     return summaX,summaY
 
 def calculateTangentAngle(t, *pointList):
     P1,P2,P3,P4 = pointList
-    
     xT,yT = cBezier(t, P1,P2,P3,P4)
-    
     xB,yB = derivativeBezier(3,t,*pointList)
-    # later you have to create special opperation for t = 0 and t = 1
-
-
+    
     stroke(0) ###test
     line((xT,yT),(xT+xB,yT+yB)) ###test
     
@@ -88,18 +80,6 @@ tanAngle = calculateTangentAngle(tValue, P1,P2,P3,P4)
 drawCross(tPoint,color=(1,0,1))
 
 
-### test
-# stroke(None)
-# for i in range(100):
-#     i = i/100
-#     drawPoint(derivativeBezier(3,i, P1,P2,P3,P4))
-# print d
-# stroke(0,1,0)
-# line((0,0),(100,0))
-# save()
-# rotate(d)
-# line((0,0),(100,0))
-# restore()
 
 
 
