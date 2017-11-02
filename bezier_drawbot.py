@@ -31,7 +31,7 @@ import inspect
 
 #nalezy: wyczyscic wszystkie calculateBezier i zastapic je geneticBezier
 
-CANVAS = 700
+CANVAS = 1700
 
 size(CANVAS, CANVAS) #DrawBot canvas
 
@@ -62,7 +62,7 @@ def closest (LUT, pointOffCurve):
             position = n
 
     if position == -1:
-        print "HUJNIA"
+        # print "HUJNIA"
         return None
 
     return LUT[position]
@@ -472,7 +472,7 @@ class bezier(object):
         EN:Draws tangent and normal for point calculated with current ratio t"""
         x = self.PointOfAcctual_t.x
         y = self.PointOfAcctual_t.y
-
+        print "D::::::{}y:::::{}".format(self.D.y,y) ###test
         if self.D.x == self.P4.x and self.D.y == self.P4.y:
             #operation, that calculates tangent for t = 1. Without it, our tangent will be paraller to Xaxis
             yTanDistance = 35 * sin(angle(self.P4,self.P3))
@@ -570,9 +570,9 @@ class bezier(object):
         alfa = degrees(angle(self.P1,self.P4))
 
 
-        print yJUMP  ###test
+        # print yJUMP  ###test
         aligned = alignCurveToXaxis(self) ###TO PRZEKRĘCA NA STAŁĘ!!!!
-        print yJUMP, self.P1.y, JUMPpoint.y  ###test
+        # print yJUMP, self.P1.y, JUMPpoint.y  ###test
 
         aP1 = aligned.P1
         aP2 = aligned.P2
@@ -669,7 +669,7 @@ class bezier(object):
             summa += cValues[i] * arcfn(3,t,Wx,Wy)
 
         lenght = z * summa
-        print lenght ### test
+        # print lenght ### test
         return lenght
 
     ################################################## TESTE
@@ -705,7 +705,7 @@ class bezier(object):
 
         lenght = z * summa
 
-        print tList ### test
+        # print tList ### test
         for i in range(len(tList)):
             self.drawT(tList[i])
 
@@ -751,7 +751,7 @@ class bezier(object):
         if InfPoint == None:
             pass
         else:
-            print InfT # test
+            # print InfT # test
             save()
             fill(None)
             strokeWidth(3)
@@ -806,10 +806,10 @@ Curve.drawConvexHull()
 # Curve.drawInflection()
 # Curve.drawT(0.5)
 # Curve.calculateLength()
-Curve.drawRegularDistance()
+# Curve.drawRegularDistance()
 
 
-Curve.drawBoundingBox()
+# Curve.drawBoundingBox()
 Curve.drawDerivative()
 Curve.drawInterpolationPoints()
 Curve.drawDeepInterpolationPoints()
