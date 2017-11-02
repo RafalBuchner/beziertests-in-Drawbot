@@ -1,7 +1,9 @@
 from easyEnvironment import *
 import math
-setEnvironment(1000,-100)
-crossLine = (392, 266)
+setEnvironment(1118, -202)
+
+### Play with it by changeing cursorPoint
+cursorPoint = (172, 426)
 P1 = (20, 30)
 P2 = (126, 354)
 P3 = (322, 336)
@@ -10,37 +12,44 @@ P4 = (404, 158)
 
 
 
-drawCross(crossLine,True)
+drawCross(cursorPoint,True)
 drawBezier(P1,P2,P3,P4)
 
 ###########################
-def getLut(P1,P2,P3,P4):
-    table = []
-    for x in range(1,100):
-        table.append( cBezier(x/100,P1,P2,P3,P4) )
-    return table
+def getLut(P1,P2,P3,P4, getT=False, accuracy = 120):
+    """Returns Look Up Table, which contains pointsOnCurve for cBezier, if getT=True tjen returns table with points and their factors"""
+    lut_table = []
+    for t in range(accuracy):
+        t=t/accuracy
+        if not getT:
+            lut_table.append( cBezier(t,P1,P2,P3,P4) )
+        else:
+            lut_table.append( (cBezier(t,P1,P2,P3,P4),t) )
 
-def closest(pointOffCurve, P1,P2,P3,P4):
+    return lut_table
+
+def closestPointAndT(pointOffCurve, P1,P2,P3,P4):
     """Returns closest point"""
     ### add option for closest point's t-value (you have to work with getLut)
-    LUT = getLut(P1,P2,P3,P4)
+    LUT = getLut(P1,P2,P3,P4, getT=True)
+    print LUT[1]
     minimalDist = 10000
     position = -1
     distance = 0
     for n in range(len(LUT)):
-        distance = lenghtAB(pointOffCurve, LUT[n])
+        distance = lenghtAB(pointOffCurve, LUT[n][0])
 
         if distance < minimalDist:
             minimalDist = distance
             position = n
 
     if position == -1:
-        # print "HUJNIA"
         return None
 
     return LUT[position]
 
 def lenghtAB(A,B):
+    """Returns distance value between two points: A and B"""
     bx,by = B
     ax,ay = A
     sqA = (bx - ax) **2
@@ -62,7 +71,7 @@ def rotatePoint( P,angle, originPoint):
     y = ( px - originPointX ) * math.sin( alfa ) + ( py - originPointY ) * math.cos( alfa ) + originPointY
 
     return x, y
-                  
+
 def angle( A, B ):
     """returns angle between line AB and axis x"""
     ax, ay = A
@@ -76,7 +85,7 @@ def angle( A, B ):
 
     angle = math.atan( tangens )
     return degrees(angle)
-                  
+
 def cBezier(t, *pointList):
     """returns coordinates for factor called "t"(from 0 to 1). Based on cubic bezier formula.
     """
@@ -99,7 +108,7 @@ def derivativeBezier(t,*pointList):
     p2x,p2y = pointList[1]
     p3x,p3y = pointList[2]
     p4x,p4y = pointList[3]
-    
+
     summaX = -3*p1x*(1 - t)**2 + p2x*(3*(1 - t)**2 - 6*(1 - t)*t) + p3x*(6*(1 - t)*t - 3*t**2) + 3*p4x*t**2
     summaY = -3*p1y*(1 - t)**2 + p2y*(3*(1 - t)**2 - 6*(1 - t)*t) + p3y*(6*(1 - t)*t - 3*t**2) + 3*p4y*t**2
     return summaX,summaY
@@ -109,10 +118,10 @@ def calculateTangentAngle(t, *pointList):
     P1,P2,P3,P4 = pointList
     xT,yT = cBezier(t, P1,P2,P3,P4)
     xB,yB = derivativeBezier(t,*pointList)
-    
+
     # stroke(0) ###test
     # line((xT,yT),(xT+xB,yT+yB)) ###test
-    
+
     return angle((0,0),(xB,yB))
 
 
@@ -120,14 +129,16 @@ def calculateTangentAngle(t, *pointList):
 
 lineDash(5,5)
 #### closest Point problem
-closestOnCurve = closest(crossLine, P1,P2,P3,P4)
-drawPoint(closestOnCurve,color=(0,0.5,1))
+closestPoint, closestPoint_t = closestPointAndT(cursorPoint, P1,P2,P3,P4)
 
-line(crossLine,closestOnCurve)
+drawPoint(closestPoint,color=(0,0.5,1))
+
+line(cursorPoint,closestPoint)
 
 
-#### Tangent problem    
-tValue = 0.17
+#### Tangent problem
+# tValue = 0.17
+tValue = closestPoint_t ### connected problems into one solution
 tPx,tPy = cBezier(tValue, P1,P2,P3,P4)
 tanAngle = calculateTangentAngle(tValue, P1,P2,P3,P4)
 
@@ -144,5 +155,3 @@ stroke(1,0,1)
 line((tPx,tPy),(tanPx3+tPx,tanPy3+tPy))
 stroke(0,1,1)
 line((tPx,tPy),(tanPx4+tPx,tanPy4+tPy))
-
-
