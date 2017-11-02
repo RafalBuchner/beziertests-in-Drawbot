@@ -1,7 +1,7 @@
 from easyEnvironment import *
 import math
-setEnvironment(3000,-100)
-crossLine = (552, 394)
+setEnvironment(1000,-100)
+crossLine = (392, 266)
 P1 = (20, 30)
 P2 = (126, 354)
 P3 = (322, 336)
@@ -14,16 +14,57 @@ drawCross(crossLine,True)
 drawBezier(P1,P2,P3,P4)
 
 ###########################
-pascalTriangle = [      [1],           # n=0
-                       [1,1],          # n=1
-                      [1,2,1],         # n=2
-                     [1,3,3,1],        # n=3
-                    [1,4,6,4,1],       # n=4
-                   [1,5,10,10,5,1],    # n=5
-                  [1,6,15,20,15,6,1]]  # n=6
+def getLut(P1,P2,P3,P4):
+    table = []
+    for x in range(1,100):
+        table.append( cBezier(x/100,P1,P2,P3,P4) )
+    return table
+
+def closest(pointOffCurve, P1,P2,P3,P4):
+    """Returns closest point"""
+    ### add option for closest point's t-value (you have to work with getLut)
+    LUT = getLut(P1,P2,P3,P4)
+    minimalDist = 10000
+    position = -1
+    distance = 0
+    for n in range(len(LUT)):
+        distance = lenghtAB(pointOffCurve, LUT[n])
+
+        if distance < minimalDist:
+            minimalDist = distance
+            position = n
+
+    if position == -1:
+        # print "HUJNIA"
+        return None
+
+    return LUT[position]
+
+def lenghtAB(A,B):
+    bx,by = B
+    ax,ay = A
+    sqA = (bx - ax) **2
+    sqB = (by - ay) **2
+    sqC = sqA + sqB
+    if sqC > 0:
+        lengthAB = math.sqrt(sqC)
+        return lengthAB
+    else:
+        return 0
+
+def rotatePoint( P,angle, originPoint):
+    """Rotates x/y around x_orig/y_orig by angle and returns result as [x,y]."""
+    alfa = radians(angle)
+    px,py=P
+    originPointX, originPointY = originPoint
+
+    x = ( px - originPointX ) * math.cos( alfa ) - ( py - originPointY ) * math.sin( alfa ) + originPointX
+    y = ( px - originPointX ) * math.sin( alfa ) + ( py - originPointY ) * math.cos( alfa ) + originPointY
+
+    return x, y
                   
 def angle( A, B ):
-    """zmienna wskazująca kąt (w radianach) między odcinkiem, który przecina wskazane dwa punkty, a osią x"""
+    """returns angle between line AB and axis x"""
     ax, ay = A
     bx, by = B
     xDiff = ax - bx
@@ -64,22 +105,44 @@ def derivativeBezier(t,*pointList):
     return summaX,summaY
 
 def calculateTangentAngle(t, *pointList):
+    """Calculates tangent angle for curve's current t-factor"""
     P1,P2,P3,P4 = pointList
     xT,yT = cBezier(t, P1,P2,P3,P4)
-    xB,yB = derivativeBezier(3,t,*pointList)
+    xB,yB = derivativeBezier(t,*pointList)
     
-    stroke(0) ###test
-    line((xT,yT),(xT+xB,yT+yB)) ###test
+    # stroke(0) ###test
+    # line((xT,yT),(xT+xB,yT+yB)) ###test
     
     return angle((0,0),(xB,yB))
 
-    
-tValue = 0.59
-tPoint = cBezier(tValue, P1,P2,P3,P4)
+
+
+
+lineDash(5,5)
+#### closest Point problem
+closestOnCurve = closest(crossLine, P1,P2,P3,P4)
+drawPoint(closestOnCurve,color=(0,0.5,1))
+
+line(crossLine,closestOnCurve)
+
+
+#### Tangent problem    
+tValue = 0.17
+tPx,tPy = cBezier(tValue, P1,P2,P3,P4)
 tanAngle = calculateTangentAngle(tValue, P1,P2,P3,P4)
-drawCross(tPoint,color=(1,0,1))
 
 
-
+tanPx1,tanPy1 = rotatePoint( (0,100),tanAngle, (0,0)) # needed for StemThickness
+tanPx2,tanPy2 = rotatePoint( (0,100),tanAngle-180, (0,0)) # needed for StemThickness
+tanPx3,tanPy3 = rotatePoint( (0,100),tanAngle-90, (0,0))
+tanPx4,tanPy4 = rotatePoint( (0,100),tanAngle-270, (0,0))
+stroke(1,1,0)
+line((tPx,tPy),(tanPx1+tPx,tanPy1+tPy))
+stroke(1,0,0)
+line((tPx,tPy),(tanPx2+tPx,tanPy2+tPy))
+stroke(1,0,1)
+line((tPx,tPy),(tanPx3+tPx,tanPy3+tPy))
+stroke(0,1,1)
+line((tPx,tPy),(tanPx4+tPx,tanPy4+tPy))
 
 
