@@ -1,3 +1,6 @@
+#!/usr/bin/python2.4
+# -*- coding: utf-8 -*-
+from drawBot import *
 from random import random
 import math
 import inspect
