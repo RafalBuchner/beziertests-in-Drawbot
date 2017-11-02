@@ -51,41 +51,16 @@ def cBezier(t, *pointList):
     else:
         print "ERROR: cBezier() should have 4 points"
 
-def binomial(n,k):
-    #######Błagam, wymyśl nie generyczny kod na to, musisz zrobić stałą wartość
-    #######Dąż do tego aby funkcję binomal wypierdolić
 
-    while n >= len(pascalTriangle):
-        s = len(pascalTriangle)
-        nextRow = []
-        nextRow[0] = 1
-        for i in range(s):
-            prev = s-1
-            nextRow[i]= pascalTriangle[prev][i-1] + pascalTriangle[prev][i]
-        nextRow[s] = 1
-        pascalTriangle.append(nextRow)
-    return pascalTriangle[n][k]
 
-def derivativeBezier(n,t,*pointList):
-    #######Błagam, wymyśl nie generyczny kod na to, musisz zrobić stałą wartość
-
+def derivativeBezier(t,*pointList):
+    
     p1x,p1y = pointList[0]
     p2x,p2y = pointList[1]
     p3x,p3y = pointList[2]
     p4x,p4y = pointList[3]
     Wx = [p1x,p2x,p3x,p4x]
     Wy = [p1y,p2y,p3y,p4y]
-    
-    # derivativeBezier(n,t,*pointList):
-    # summaX = 0 #we wzorze wartosc i poczatkowa
-    # summaY = 0 #we wzorze wartosc i poczatkowa
-    # i = 0
-    # k = n - 1
-    # while i <= k:
-    #     # zapis sumaryczny: dumian newtona o wartosci gornej n, dolnej i, pomnoz to z (1-t)do potegi n-1 razy t do potegi i
-    #     summaX += binomial(k,i) * (1-t)**(k-i) * t**i * n*(Wx[i+1] - Wx[i])
-    #     summaY += binomial(k,i) * (1-t)**(k-i) * t**i * n*(Wy[i+1] - Wy[i])
-    #     i += 1
     
     summaX = -3*p1x*(1 - t)**2 + p2x*(3*(1 - t)**2 - 6*(1 - t)*t) + p3x*(6*(1 - t)*t - 3*t**2) + 3*p4x*t**2
     summaY = -3*p1y*(1 - t)**2 + p2y*(3*(1 - t)**2 - 6*(1 - t)*t) + p3y*(6*(1 - t)*t - 3*t**2) + 3*p4y*t**2
@@ -107,7 +82,7 @@ def calculateTangentAngle(t, *pointList):
     return angle((0,0),(xB,yB))
 
     
-tValue = 0.2
+tValue = 0.59
 tPoint = cBezier(tValue, P1,P2,P3,P4)
 tanAngle = calculateTangentAngle(tValue, P1,P2,P3,P4)
 drawCross(tPoint,color=(1,0,1))
