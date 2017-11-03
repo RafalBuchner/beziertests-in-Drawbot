@@ -101,7 +101,7 @@ def getLut(P1,P2,P3,P4, getT=False, accuracy = 100):
     for i in range(accuracy):
         
         print "" ###test
-        t=(i/accuracy)
+        t=i/accuracy
         print "OnCurve:{} || t:{} || i:{} || accuracy: {}".format(cBezier(t,P1,P2,P3,P4),t,i,accuracy)
         if not getT:
             
