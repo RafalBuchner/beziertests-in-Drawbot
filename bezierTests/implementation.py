@@ -1,21 +1,21 @@
 """NEXT STEP: expand the curve to the whole segment with lines and few beziers and try to be able to work on that"""
 from easyEnvironment import *
 from thickness_math import *
-setEnvironment(800, -202)
 
-cursorPoint = (-22, 480)
+setEnvironment(786, -226)
+
+cursorPoint = (328, 382)
 P1 = (20, 30)
-P2 = (-100, 336)
+P2 = (150, 320)
 P3 = (322, 336)
 P4 = (404, 158)
 
 drawCross(cursorPoint,True)
 drawBezier(P1,P2,P3,P4)
-print getLut(P1,P2,P3,P4)
 lineDash(5,5)
 #### closest Point problem
 closestPoint, closestPoint_t = closestPointAndT(cursorPoint, P1,P2,P3,P4)
-print closestPoint
+
 drawPoint(closestPoint,color=(0,0.5,1))
 
 line(cursorPoint,closestPoint)

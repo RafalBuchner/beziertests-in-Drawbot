@@ -1,17 +1,16 @@
-"""NEXT STEP: expand the curve to the whole segment with lines and few beziers and try to be able to work on that"""
+from __future__ import division
 import math
-
-
+"""NEXT STEP: expand the curve to the whole segment with lines and few beziers and try to be able to work on that"""
 
 def closestPointAndT(pointOffCurve, P1,P2,P3,P4):
     """Returns closest point"""
     ### add option for closest point's t-value (you have to work with getLut)
-    LUT = getLut(P1,P2,P3,P4, getT=True)
+    LUT, LUT_t = getLut(P1,P2,P3,P4, getT=True)
     minimalDist = 10000
     position = -1
     distance = 0
     for n in range(len(LUT)):
-        distance = lenghtAB(pointOffCurve, LUT[n][0])
+        distance = lenghtAB(pointOffCurve, LUT[n])
 
         if distance < minimalDist:
             minimalDist = distance
@@ -98,24 +97,20 @@ def calculateTangentAngle(t, *pointList):
 def getLut(P1,P2,P3,P4, getT=False, accuracy = 100):
     """Returns Look Up Table, which contains pointsOnCurve for cBezier, if getT=True tjen returns table with points and their factors"""
     lut_table = []
+    lut_t_factors = []
     for i in range(accuracy):
         
-        print "" ###test
         t=i/accuracy
-        print "OnCurve:{} || t:{} || i:{} || accuracy: {}".format(cBezier(t,P1,P2,P3,P4),t,i,accuracy)
         if not getT:
             
             lut_table.append( cBezier(t,P1,P2,P3,P4) )
         else:
-            lut_table.append( (cBezier(t,P1,P2,P3,P4),t) )
+            lut_table.append( cBezier(t,P1,P2,P3,P4) )
+            lut_t_factors.append( t )
+    if not getT:
+        return lut_table
+    else:
+        return lut_table, lut_t_factors
 
-    return lut_table
 
-
-#test
-P1 = (20, 30)
-P2 = (-100, 336)
-P3 = (322, 336)
-P4 = (404, 158)
-getLut(P1,P2,P3,P4)
 
